@@ -1,0 +1,53 @@
+[
+    {
+        "id": "inject_motion",
+        "type": "inject",
+        "name": "Giả lập chuyển động",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "true",
+        "payloadType": "bool",
+        "wires": [["function_count"]]
+    },
+    {
+        "id": "function_count",
+        "type": "function",
+        "name": "Đếm số lần",
+        "func": "let count = flow.get('motion_count') || 0;\nif (msg.payload === true) {\n count += 1;\n flow.set('motion_count', count);\n msg.payload = count;\n}\nreturn msg;",
+        "outputs": 1,
+        "wires": [["ui_text"]]
+    },
+    {
+        "id": "ui_text",
+        "type": "ui_text",
+        "name": "Hiển thị số lần",
+        "label": "Số lần phát hiện:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "wires": []
+    },
+    {
+        "id": "inject_reset",
+        "type": "inject",
+        "name": "Reset",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "payload": "reset",
+        "payloadType": "str",
+        "wires": [["function_reset"]]
+    },
+    {
+        "id": "function_reset",
+        "type": "function",
+        "name": "Reset bộ đếm",
+        "func": "if (msg.payload === 'reset') {\n flow.set('motion_count', 0);\n msg.payload = 0;\n}\nreturn msg;",
+        "outputs": 1,
+        "wires": [["ui_text"]]
+    }
+]
